@@ -1,0 +1,30 @@
+{
+  "name": "react-p2",
+  "version": "0.1.0",
+  "main": "index.js",
+  "dependencies": {
+    "p2": "^0.7.0",
+    "react": "0.x"
+  },
+  "scripts": {
+    "build": "babel --stage=0 src/ --out-dir build/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mathieudutour/react-p2"
+  },
+  "keywords": [
+    "react",
+    "p2"
+  ],
+  "author": "Mathieu Dutour",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mathieudutour/react-p2/issues"
+  },
+  "homepage": "https://github.com/mathieudutour/react-p2",
+  "devDependencies": {
+    "babel": "^5.8.23"
+  }
+}
