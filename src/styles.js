@@ -2,6 +2,7 @@ module.exports = {
   worldStyle: {
     minHeight: '100%',
     overflow: 'hidden',
+    position: 'relative',
   },
   boxStyle: {},
   circleStyle: {
