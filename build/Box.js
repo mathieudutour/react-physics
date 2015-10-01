@@ -14,6 +14,10 @@ var React = require('react');
 var p2 = require('p2');
 var Shape = require('./Shape');
 
+var _require = require('./styles');
+
+var boxStyle = _require.boxStyle;
+
 module.exports = (function (_Shape) {
   _inherits(Box, _Shape);
 
@@ -54,6 +58,11 @@ module.exports = (function (_Shape) {
 
       this._shape = new p2.Box(_Object$assign({ height: height, width: width }, shapeOptions));
       return this._shape;
+    }
+  }, {
+    key: 'getShapeStyle',
+    value: function getShapeStyle() {
+      return boxStyle;
     }
   }], [{
     key: 'propTypes',

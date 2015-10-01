@@ -1,5 +1,6 @@
 const React = require('react');
 const p2 = require('p2');
+const {shapeStyle} = require('./styles');
 
 module.exports = class Shape extends React.Component {
   static propTypes = {
@@ -73,7 +74,7 @@ module.exports = class Shape extends React.Component {
     };
     return (
       <div className={'p2-shape ' + (className || '')}
-        style={Object.assign(transform, style)}
+        style={Object.assign({}, shapeStyle, this.getShapeStyle(), transform, style)}
         onTouchEnd={this._handleTouchEnd}
         onTouchMove={this._handleTouchMove}
         onTouchStart={this._handleTouchStart}

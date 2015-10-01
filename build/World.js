@@ -6,8 +6,14 @@ var _objectWithoutProperties = require('babel-runtime/helpers/object-without-pro
 
 var _Object$keys = require('babel-runtime/core-js/object/keys')['default'];
 
+var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
+
 var React = require('react');
 var p2 = require('p2');
+
+var _require = require('./styles');
+
+var worldStyle = _require.worldStyle;
 
 var fixedTimeStep = 1 / 60;
 var maxSubSteps = 10;
@@ -124,7 +130,8 @@ var World = React.createClass({
 
     return React.createElement(
       'div',
-      { className: 'p2-world ' + className, style: style, ref: 'container' },
+      { className: 'p2-world ' + className,
+        style: _Object$assign({}, worldStyle, style), ref: 'container' },
       React.Children.map(children, function (child) {
         return React.cloneElement(child, {
           ref: child.key,

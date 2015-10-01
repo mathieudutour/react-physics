@@ -1,5 +1,6 @@
 const React = require('react');
 const p2 = require('p2');
+const {worldStyle} = require('./styles');
 
 const fixedTimeStep = 1 / 60;
 const maxSubSteps = 10;
@@ -91,7 +92,8 @@ const World = React.createClass({
   render() {
     const {children, className = '', style, ...rest} = this.props;
     return (
-      <div className={'p2-world ' + className} style={style} ref={'container'}>
+      <div className={'p2-world ' + className}
+        style={Object.assign({}, worldStyle, style)} ref={'container'}>
         {React.Children.map(children, (child) => {
           return React.cloneElement(child, {
             ref: child.key,

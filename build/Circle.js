@@ -14,6 +14,10 @@ var React = require('react');
 var p2 = require('p2');
 var Shape = require('./Shape');
 
+var _require = require('./styles');
+
+var circleStyle = _require.circleStyle;
+
 module.exports = (function (_Shape) {
   _inherits(Circle, _Shape);
 
@@ -47,6 +51,15 @@ module.exports = (function (_Shape) {
 
       this._shape = new p2.Circle(_Object$assign({ radius: radius }, shapeOptions));
       return this._shape;
+    }
+  }, {
+    key: 'getShapeStyle',
+    value: function getShapeStyle() {
+      if (!this._shape) {
+        this.getP2Shape();
+      }
+      var radius = this._shape.radius;
+      return _Object$assign({}, circleStyle, { width: 2 * radius, height: 2 * radius });
     }
   }], [{
     key: 'propTypes',

@@ -21,6 +21,10 @@ var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
 var React = require('react');
 var p2 = require('p2');
 
+var _require = require('./styles');
+
+var shapeStyle = _require.shapeStyle;
+
 module.exports = (function (_React$Component) {
   _inherits(Shape, _React$Component);
 
@@ -164,7 +168,7 @@ module.exports = (function (_React$Component) {
       return React.createElement(
         'div',
         _extends({ className: 'p2-shape ' + (className || ''),
-          style: _Object$assign(transform, style),
+          style: _Object$assign({}, shapeStyle, this.getShapeStyle(), transform, style),
           onTouchEnd: this._handleTouchEnd,
           onTouchMove: this._handleTouchMove,
           onTouchStart: this._handleTouchStart
