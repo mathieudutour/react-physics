@@ -2,8 +2,9 @@ const React = require('react');
 const p2 = require('p2');
 
 module.exports = class Shape extends React.Component {
-  propTypes = {
+  static propTypes = {
     bodyOptions: React.PropTypes.object,
+    shapeOptions: React.PropTypes.object,
     style: React.PropTypes.object,
     className: React.PropTypes.string,
     children: React.PropTypes.node,
@@ -13,6 +14,8 @@ module.exports = class Shape extends React.Component {
     onStartControl: React.PropTypes.func,
     onEndControl: React.PropTypes.func,
     onControl: React.PropTypes.func,
+    ignoreRotation: React.PropTypes.bool,
+    ignoreTranslation: React.PropTypes.bool,
   }
 
   constructor(props) {
@@ -22,6 +25,19 @@ module.exports = class Shape extends React.Component {
     this._shape = this.getP2Shape();
     this._body.addShape(this._shape);
     this.state = {dragging: false};
+    this._position = this._body.position;
+    this._angle = this._body.angle;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {bodyOptions = {}, shapeOptions = {}} = nextProps;
+    Object.keys(bodyOptions).forEach(k => {
+      if (k === 'position' || k === 'angle') { return; }
+      this._body[k] = nextProps.bodyOptions[k];
+    });
+    Object.keys(shapeOptions).forEach(k => {
+      this._shape[k] = nextProps.shapeOptions[k];
+    });
   }
 
   getP2Body() {
@@ -29,20 +45,39 @@ module.exports = class Shape extends React.Component {
   }
 
   render() {
-    const {children, className, style,
-      pos = this._body.position, angle = this._body.angle} = this.props;
+    const {
+      children,
+      className,
+      style,
+      ignoreRotation,
+      ignoreTranslation,
+      ...rest,
+    } = this.props;
+    let {pos = this._body.position, angle = this._body.angle} = this.props;
+
+    if (ignoreRotation) {
+      angle = this._angle;
+    } else {
+      this._angle = angle;
+    }
+    if (ignoreTranslation) {
+      pos = this._position;
+    } else {
+      this._position = pos;
+    }
     const transform = {
       transform: `translate(
         calc(${pos[0]}px - 50%),
         calc(${-pos[1]}px - 50%))
-      rotateZ(${-angle}rad) `,
+        rotateZ(${-angle}rad)`,
     };
     return (
       <div className={'p2-shape ' + (className || '')}
         style={Object.assign(transform, style)}
         onTouchEnd={this._handleTouchEnd}
         onTouchMove={this._handleTouchMove}
-        onTouchStart={this._handleTouchStart}>
+        onTouchStart={this._handleTouchStart}
+        {...rest} >
         {children}
       </div>
     );
@@ -58,14 +93,16 @@ module.exports = class Shape extends React.Component {
         id: e.changedTouches[0].identifier,
       };
       this.setState({dragging: true});
-      this.props.onStartControl();
+      this.props.onStartControl([
+        this._startPoint.x,
+        -this._startPoint.y,
+      ]);
     }
   }
 
   _handleTouchEnd = (e) => {
     if (!this._startPoint) { return; }
-    const touch = Array.from(e.changedTouches).find(t =>
-      t.identifier === this._startPoint.id);
+    const touch = Array.from(e.changedTouches).find(t => t.identifier === this._startPoint.id);
     if (!touch) { return; }
     this._startPoint = null;
     this.setState({dragging: false});
@@ -79,8 +116,8 @@ module.exports = class Shape extends React.Component {
         t.identifier === this._startPoint.id);
       if (!touch) { return; }
       this.props.onControl([
-        this._startPoint.posX + (touch.screenX - this._startPoint.x),
-        this._startPoint.posY - (touch.screenY - this._startPoint.y),
+        touch.screenX,
+        -touch.screenY,
       ]);
     }
   }

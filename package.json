@@ -1,14 +1,17 @@
 {
   "name": "react-p2",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "index.js",
   "dependencies": {
+    "babel-runtime": "^5.8.25",
     "p2": "^0.7.0",
     "react": "0.x"
   },
   "scripts": {
-    "build": "babel --stage=0 src/ --out-dir build/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prebuild": "rm -rf build && mkdir build",
+    "build": "babel src/ --out-dir build/",
+    "eslint": "eslint src/",
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "repository": {
     "type": "git",
@@ -25,6 +28,22 @@
   },
   "homepage": "https://github.com/mathieudutour/react-p2",
   "devDependencies": {
-    "babel": "^5.8.23"
+    "babel": "^5.8.23",
+    "babel-eslint": "^4.1.1",
+    "eslint": "^1.1.0",
+    "eslint-config-defaults": "^4.0.1",
+    "eslint-plugin-react": "^3.3.2",
+    "ghooks": "^0.3.2"
+  },
+  "config": {
+    "ghooks": {
+      "pre-commit": "npm run eslint && npm run test"
+    }
+  },
+  "babel": {
+    "stage": 0,
+    "optional": [
+      "runtime"
+    ]
   }
 }

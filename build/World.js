@@ -1,8 +1,10 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = require('babel-runtime/helpers/extends')['default'];
 
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+var _objectWithoutProperties = require('babel-runtime/helpers/object-without-properties')['default'];
+
+var _Object$keys = require('babel-runtime/core-js/object/keys')['default'];
 
 var React = require('react');
 var p2 = require('p2');
@@ -27,6 +29,8 @@ var World = React.createClass({
   },
 
   componentWillMount: function componentWillMount() {
+    this._nullBody = new p2.Body();
+    this._mouseConstraint = null;
     this._bodies = {};
   },
 
@@ -88,14 +92,14 @@ var World = React.createClass({
 
     React.Children.forEach(children, function (child) {
       var body = _this2.refs[child.key].getP2Body();
-      if (Object.keys(prevBodies).indexOf(child.key) === -1) {
+      if (_Object$keys(prevBodies).indexOf(child.key) === -1) {
         _this2._world.addBody(body);
       }
       bodies[child.key] = body;
     });
 
-    Object.keys(prevBodies).filter(function (x) {
-      return Object.keys(bodies).indexOf(x) === -1;
+    _Object$keys(prevBodies).filter(function (x) {
+      return _Object$keys(bodies).indexOf(x) === -1;
     }).forEach(function (removedChild) {
       _this2._world.removeBody(prevBodies[removedChild]);
     });
@@ -126,23 +130,52 @@ var World = React.createClass({
           ref: child.key,
           pos: _this3._bodies[child.key] && _this3._bodies[child.key].position,
           angle: _this3._bodies[child.key] && _this3._bodies[child.key].angle,
-          onStartControl: function onStartControl() {
-            _this3._oldMass = _this3._bodies[child.key].mass;
-            _this3._bodies[child.key].mass = 0;
-            _this3._bodies[child.key].type = p2.Body.STATIC;
-            _this3._bodies[child.key].velocity = [0, 0];
+          onStartControl: function onStartControl(pos) {
+            _this3._startControl(_this3._bodies[child.key], pos);
+            // this._oldMass = this._bodies[child.key].mass;
+            // this._bodies[child.key].mass = 0;
+            // this._bodies[child.key].type = p2.Body.STATIC;
+            // this._bodies[child.key].velocity = [0, 0];
           },
           onEndControl: function onEndControl() {
-            _this3._bodies[child.key].mass = _this3._oldMass;
-            _this3._bodies[child.key].type = p2.Body.DYNAMIC;
+            _this3._endControl();
+            // this._bodies[child.key].mass = this._oldMass;
+            // this._bodies[child.key].type = p2.Body.DYNAMIC;
           },
           onControl: function onControl(pos) {
-            _this3._bodies[child.key].position = pos;
-            _this3._bodies[child.key].velocity = [0, 0];
+            _this3._handleMove(pos);
+            // this._bodies[child.key].position = pos;
+            // this._bodies[child.key].velocity = [0, 0];
           }
         });
       })
     );
+  },
+
+  _startControl: function _startControl(b, physicsPosition) {
+    b.wakeUp();
+    var localPoint = p2.vec2.create();
+    b.toLocalFrame(localPoint, physicsPosition);
+    this._world.addBody(this._nullBody);
+    this._mouseConstraint = new p2.RevoluteConstraint(this._nullBody, b, {
+      localPivotA: physicsPosition,
+      localPivotB: localPoint
+    });
+    this._world.addConstraint(this._mouseConstraint);
+  },
+
+  _handleMove: function _handleMove(physicsPosition) {
+    if (this._mouseConstraint) {
+      p2.vec2.copy(this._mouseConstraint.pivotA, physicsPosition);
+      this._mouseConstraint.bodyA.wakeUp();
+      this._mouseConstraint.bodyB.wakeUp();
+    }
+  },
+
+  _endControl: function _endControl() {
+    this._world.removeConstraint(this._mouseConstraint);
+    this._mouseConstraint = null;
+    this._world.removeBody(this._nullBody);
   },
 
   _initBounds: function _initBounds() {

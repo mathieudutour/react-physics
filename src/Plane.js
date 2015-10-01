@@ -3,7 +3,7 @@ const p2 = require('p2');
 const Shape = require('./Shape');
 
 module.exports = class Plane extends Shape {
-  propTypes = {
+  static propTypes = {
     shapeOptions: React.PropTypes.object,
   }
 

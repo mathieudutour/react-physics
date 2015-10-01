@@ -19,6 +19,8 @@ const World = React.createClass({
   },
 
   componentWillMount() {
+    this._nullBody = new p2.Body();
+    this._mouseConstraint = null;
     this._bodies = {};
   },
 
@@ -97,24 +99,53 @@ const World = React.createClass({
                   this._bodies[child.key].position,
             angle: this._bodies[child.key] &&
                   this._bodies[child.key].angle,
-            onStartControl: () => {
-              this._oldMass = this._bodies[child.key].mass;
-              this._bodies[child.key].mass = 0;
-              this._bodies[child.key].type = p2.Body.STATIC;
-              this._bodies[child.key].velocity = [0, 0];
+            onStartControl: (pos) => {
+              this._startControl(this._bodies[child.key], pos);
+              // this._oldMass = this._bodies[child.key].mass;
+              // this._bodies[child.key].mass = 0;
+              // this._bodies[child.key].type = p2.Body.STATIC;
+              // this._bodies[child.key].velocity = [0, 0];
             },
             onEndControl: () => {
-              this._bodies[child.key].mass = this._oldMass;
-              this._bodies[child.key].type = p2.Body.DYNAMIC;
+              this._endControl();
+              // this._bodies[child.key].mass = this._oldMass;
+              // this._bodies[child.key].type = p2.Body.DYNAMIC;
             },
             onControl: (pos) => {
-              this._bodies[child.key].position = pos;
-              this._bodies[child.key].velocity = [0, 0];
+              this._handleMove(pos);
+              // this._bodies[child.key].position = pos;
+              // this._bodies[child.key].velocity = [0, 0];
             },
           });
         })}
       </div>
     );
+  },
+
+  _startControl(b, physicsPosition) {
+    b.wakeUp();
+    const localPoint = p2.vec2.create();
+    b.toLocalFrame(localPoint, physicsPosition);
+    this._world.addBody(this._nullBody);
+    this._mouseConstraint = new p2.RevoluteConstraint(this._nullBody, b, {
+      localPivotA: physicsPosition,
+      localPivotB: localPoint,
+    });
+    this._world.addConstraint(this._mouseConstraint);
+  },
+
+  _handleMove(physicsPosition) {
+    if (this._mouseConstraint) {
+      p2.vec2.copy(this._mouseConstraint.pivotA, physicsPosition);
+      this._mouseConstraint.bodyA.wakeUp();
+      this._mouseConstraint.bodyB.wakeUp();
+    }
+  },
+
+  _endControl() {
+    this._world.removeConstraint(this._mouseConstraint);
+    this._mouseConstraint = null;
+    this._world.removeBody(this._nullBody);
   },
 
   _initBounds() {

@@ -3,9 +3,17 @@ const p2 = require('p2');
 const Shape = require('./Shape');
 
 module.exports = class Line extends Shape {
-  propTypes = {
+  static propTypes = {
     length: React.PropTypes.number,
     shapeOptions: React.PropTypes.object,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {length = 1} = nextProps;
+    if (length !== this.props.length) {
+      this._shape.length = length;
+    }
+    super.componentWillReceiveProps(nextProps);
   }
 
   getP2Shape() {

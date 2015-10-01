@@ -3,10 +3,21 @@ const p2 = require('p2');
 const Shape = require('./Shape');
 
 module.exports = class Box extends Shape {
-  propTypes = {
+  static propTypes = {
     height: React.PropTypes.number,
     width: React.PropTypes.number,
     shapeOptions: React.PropTypes.object,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {height = 1, width = 1} = nextProps;
+    if (height !== this.props.height) {
+      this._shape.height = height;
+    }
+    if (width !== this.props.width) {
+      this._shape.width = width;
+    }
+    super.componentWillReceiveProps(nextProps);
   }
 
   getP2Shape() {

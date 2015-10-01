@@ -1,12 +1,14 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _get = require('babel-runtime/helpers/get')['default'];
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _inherits = require('babel-runtime/helpers/inherits')['default'];
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+var _createClass = require('babel-runtime/helpers/create-class')['default'];
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
+
+var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
 
 var React = require('react');
 var p2 = require('p2');
@@ -19,15 +21,25 @@ module.exports = (function (_Shape) {
     _classCallCheck(this, Box);
 
     _get(Object.getPrototypeOf(Box.prototype), 'constructor', this).apply(this, arguments);
-
-    this.propTypes = {
-      height: React.PropTypes.number,
-      width: React.PropTypes.number,
-      shapeOptions: React.PropTypes.object
-    };
   }
 
   _createClass(Box, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      var _nextProps$height = nextProps.height;
+      var height = _nextProps$height === undefined ? 1 : _nextProps$height;
+      var _nextProps$width = nextProps.width;
+      var width = _nextProps$width === undefined ? 1 : _nextProps$width;
+
+      if (height !== this.props.height) {
+        this._shape.height = height;
+      }
+      if (width !== this.props.width) {
+        this._shape.width = width;
+      }
+      _get(Object.getPrototypeOf(Box.prototype), 'componentWillReceiveProps', this).call(this, nextProps);
+    }
+  }, {
     key: 'getP2Shape',
     value: function getP2Shape() {
       if (this._shape) {
@@ -40,9 +52,17 @@ module.exports = (function (_Shape) {
       var width = _props$width === undefined ? 1 : _props$width;
       var shapeOptions = _props.shapeOptions;
 
-      this._shape = new p2.Box(Object.assign({ height: height, width: width }, shapeOptions));
+      this._shape = new p2.Box(_Object$assign({ height: height, width: width }, shapeOptions));
       return this._shape;
     }
+  }], [{
+    key: 'propTypes',
+    value: {
+      height: React.PropTypes.number,
+      width: React.PropTypes.number,
+      shapeOptions: React.PropTypes.object
+    },
+    enumerable: true
   }]);
 
   return Box;

@@ -1,0 +1,8 @@
+---
+root: true
+"extends":
+  - "defaults/configurations/airbnb"
+env:
+  browser: true
+rules:
+  max-len: [2, 100, 2, {ignoreComments: true}]

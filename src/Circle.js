@@ -3,9 +3,17 @@ const p2 = require('p2');
 const Shape = require('./Shape');
 
 module.exports = class Circle extends Shape {
-  propTypes = {
+  static propTypes = {
     radius: React.PropTypes.number,
     shapeOptions: React.PropTypes.object,
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {radius = 1} = nextProps;
+    if (radius !== this.props.radius) {
+      this._shape.radius = radius;
+    }
+    super.componentWillReceiveProps(nextProps);
   }
 
   getP2Shape() {
