@@ -8,16 +8,18 @@ var _createClass = require('babel-runtime/helpers/create-class')['default'];
 
 var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
 
+var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
+
 var React = require('react');
 var p2 = require('p2');
-var Shape = require('./Shape');
+var Body = require('./Body');
 
 var _require = require('./styles');
 
 var planeStyle = _require.planeStyle;
 
-module.exports = (function (_Shape) {
-  _inherits(Plane, _Shape);
+module.exports = (function (_Body) {
+  _inherits(Plane, _Body);
 
   function Plane() {
     _classCallCheck(this, Plane);
@@ -37,9 +39,14 @@ module.exports = (function (_Shape) {
       return this._shape;
     }
   }, {
+    key: 'getInferedMass',
+    value: function getInferedMass() {
+      return { mass: 0 };
+    }
+  }, {
     key: 'getShapeStyle',
     value: function getShapeStyle() {
-      return planeStyle;
+      return _Object$assign({}, planeStyle, { width: '300vmax' });
     }
   }], [{
     key: 'propTypes',
@@ -50,4 +57,4 @@ module.exports = (function (_Shape) {
   }]);
 
   return Plane;
-})(Shape);
+})(Body);

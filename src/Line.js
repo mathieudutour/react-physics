@@ -1,9 +1,9 @@
 const React = require('react');
 const p2 = require('p2');
-const Shape = require('./Shape');
+const Body = require('./Body');
 const {lineStyle} = require('./styles');
 
-module.exports = class Line extends Shape {
+module.exports = class Line extends Body {
   static propTypes = {
     length: React.PropTypes.number,
     shapeOptions: React.PropTypes.object,
@@ -24,7 +24,13 @@ module.exports = class Line extends Shape {
     return this._shape;
   }
 
+  getInferedMass() {
+    const {length = 1} = this.props;
+    return {mass: length * 1};
+  }
+
   getShapeStyle() {
-    return lineStyle;
+    const {length = 1} = this.props;
+    return Object.assign({}, lineStyle, {width: length, height: 1});
   }
 };

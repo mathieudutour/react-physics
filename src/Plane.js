@@ -1,9 +1,9 @@
 const React = require('react');
 const p2 = require('p2');
-const Shape = require('./Shape');
+const Body = require('./Body');
 const {planeStyle} = require('./styles');
 
-module.exports = class Plane extends Shape {
+module.exports = class Plane extends Body {
   static propTypes = {
     shapeOptions: React.PropTypes.object,
   }
@@ -15,7 +15,11 @@ module.exports = class Plane extends Shape {
     return this._shape;
   }
 
+  getInferedMass() {
+    return {mass: 0};
+  }
+
   getShapeStyle() {
-    return planeStyle;
+    return Object.assign({}, planeStyle, {width: '300vmax'});
   }
 };

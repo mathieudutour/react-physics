@@ -12,14 +12,14 @@ var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
 
 var React = require('react');
 var p2 = require('p2');
-var Shape = require('./Shape');
+var Body = require('./Body');
 
 var _require = require('./styles');
 
 var lineStyle = _require.lineStyle;
 
-module.exports = (function (_Shape) {
-  _inherits(Line, _Shape);
+module.exports = (function (_Body) {
+  _inherits(Line, _Body);
 
   function Line() {
     _classCallCheck(this, Line);
@@ -53,9 +53,20 @@ module.exports = (function (_Shape) {
       return this._shape;
     }
   }, {
+    key: 'getInferedMass',
+    value: function getInferedMass() {
+      var _props$length2 = this.props.length;
+      var length = _props$length2 === undefined ? 1 : _props$length2;
+
+      return { mass: length * 1 };
+    }
+  }, {
     key: 'getShapeStyle',
     value: function getShapeStyle() {
-      return lineStyle;
+      var _props$length3 = this.props.length;
+      var length = _props$length3 === undefined ? 1 : _props$length3;
+
+      return _Object$assign({}, lineStyle, { width: length, height: 1 });
     }
   }], [{
     key: 'propTypes',
@@ -67,4 +78,4 @@ module.exports = (function (_Shape) {
   }]);
 
   return Line;
-})(Shape);
+})(Body);

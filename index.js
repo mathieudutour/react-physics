@@ -4,5 +4,5 @@ module.exports = {
   Line: require('./build/Line'),
   Plane: require('./build/Plane'),
   Box: require('./build/Box'),
-  _Shape: require('./build/Shape'),
+  _Body: require('./build/Body'),
 };
