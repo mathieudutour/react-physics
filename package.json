@@ -1,6 +1,7 @@
 {
-  "name": "react-p2",
-  "version": "0.1.3",
+  "name": "react-physics",
+  "description": "Set of universal react components implementing a physic engine",
+  "version": "0.1.0",
   "main": "index.js",
   "dependencies": {
     "babel-runtime": "^5.8.25",
@@ -19,14 +20,18 @@
   },
   "keywords": [
     "react",
+    "components",
+    "universal",
+    "physic",
+    "engine",
     "p2"
   ],
   "author": "Mathieu Dutour",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mathieudutour/react-p2/issues"
+    "url": "https://github.com/mathieudutour/react-physics/issues"
   },
-  "homepage": "https://github.com/mathieudutour/react-p2",
+  "homepage": "https://github.com/mathieudutour/react-physics",
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-eslint": "^4.1.1",
