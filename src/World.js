@@ -7,10 +7,17 @@ const maxSubSteps = 10;
 
 const World = React.createClass({
   propTypes: {
+    element: React.PropTypes.node,
     style: React.PropTypes.object,
     className: React.PropTypes.string,
     children: React.PropTypes.node,
     boundToElement: React.PropTypes.bool,
+  },
+
+  getDefaultProps() {
+    return {
+      element: <div />,
+    };
   },
 
   getInitialState() {
@@ -22,25 +29,18 @@ const World = React.createClass({
   componentWillMount() {
     this._nullBody = new p2.Body();
     this._mouseConstraint = null;
-    this._bodies = {};
-  },
 
-  componentDidMount() {
-    const {children, className, style, boundToElement, ...rest} = this.props;
+    const {element, children, className, style, boundToElement, ...rest} = this.props;
     this._world = new p2.World({
       ...rest,
     });
 
     this._world.defaultContactMaterial.restitution = 0.6;
+  },
 
-    React.Children.forEach(children, (child) => {
-      const body = this.refs[child.key].getP2Body();
-      this._world.addBody(body);
-      this._bodies[child.key] = body;
-    });
-
+  componentDidMount() {
     this._initBounds();
-    if (boundToElement) {
+    if (this.props.boundToElement) {
       this._world.addBody(this._topBound);
       this._world.addBody(this._leftBound);
       this._world.addBody(this._rightBound);
@@ -63,91 +63,50 @@ const World = React.createClass({
     this._request = requestAnimationFrame(_animate);
   },
 
-  componentDidUpdate() {
-    const {children, ...rest} = this.props;
-    const prevBodies = this._bodies;
-    const bodies = {};
-
-    React.Children.forEach(children, (child) => {
-      const body = this.refs[child.key].getP2Body();
-      if (Object.keys(prevBodies).indexOf(child.key) === -1) {
-        this._world.addBody(body);
-      }
-      bodies[child.key] = body;
-    });
-
-    Object.keys(prevBodies)
-      .filter(x => Object.keys(bodies).indexOf(x) === -1)
-      .forEach(removedChild => {
-        this._world.removeBody(prevBodies[removedChild]);
-      });
-
-    this._bodies = bodies;
-  },
-
   componentWillUnmount() {
     cancelAnimationFrame(this._request);
   },
 
   render() {
-    const {children, className = '', style, ...rest} = this.props;
-    return (
-      <div className={'p2-world ' + className}
-        style={Object.assign({}, worldStyle, style)} ref={'container'}>
-        {React.Children.map(children, (child) => {
-          return React.cloneElement(child, {
-            ref: child.key,
-            pos: this._bodies[child.key] &&
-                  this._bodies[child.key].position,
-            angle: this._bodies[child.key] &&
-                  this._bodies[child.key].angle,
-            onStartControl: (pos) => {
-              this._startControl(this._bodies[child.key], pos);
-              // this._oldMass = this._bodies[child.key].mass;
-              // this._bodies[child.key].mass = 0;
-              // this._bodies[child.key].type = p2.Body.STATIC;
-              // this._bodies[child.key].velocity = [0, 0];
-            },
-            onEndControl: () => {
-              this._endControl();
-              // this._bodies[child.key].mass = this._oldMass;
-              // this._bodies[child.key].type = p2.Body.DYNAMIC;
-            },
-            onControl: (pos) => {
-              this._handleMove(pos);
-              // this._bodies[child.key].position = pos;
-              // this._bodies[child.key].velocity = [0, 0];
-            },
-          });
-        })}
-      </div>
-    );
+    const {children, className = '', style, element} = this.props;
+    return React.cloneElement(element, {
+      className: 'p2-world ' + className,
+      style: Object.assign({}, worldStyle, style),
+      ref: 'container',
+      children: React.Children.map(children, (child) => {
+        return React.cloneElement(child, {
+          _step: this.state.step,
+          _world: this._world,
+          _onStartControl: this._startControl,
+          _onEndControl: this._endControl,
+          _onControl: this._handleMove,
+        });
+      }),
+    });
   },
 
   _startControl(b, physicsPosition) {
     b.wakeUp();
-    const localPoint = p2.vec2.create();
-    b.toLocalFrame(localPoint, physicsPosition);
     this._world.addBody(this._nullBody);
-    this._mouseConstraint = new p2.RevoluteConstraint(this._nullBody, b, {
-      localPivotA: physicsPosition,
-      localPivotB: localPoint,
-    });
+    this._nullBody.position = physicsPosition;
+    this._mouseConstraint = new p2.LockConstraint(this._nullBody, b);
     this._world.addConstraint(this._mouseConstraint);
   },
 
   _handleMove(physicsPosition) {
     if (this._mouseConstraint) {
-      p2.vec2.copy(this._mouseConstraint.pivotA, physicsPosition);
+      p2.vec2.copy(this._nullBody.position, physicsPosition);
       this._mouseConstraint.bodyA.wakeUp();
       this._mouseConstraint.bodyB.wakeUp();
     }
   },
 
   _endControl() {
-    this._world.removeConstraint(this._mouseConstraint);
-    this._mouseConstraint = null;
-    this._world.removeBody(this._nullBody);
+    if (this._mouseConstraint) {
+      this._world.removeConstraint(this._mouseConstraint);
+      this._mouseConstraint = null;
+      this._world.removeBody(this._nullBody);
+    }
   },
 
   _initBounds() {
