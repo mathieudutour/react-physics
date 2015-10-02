@@ -12,14 +12,14 @@ var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
 
 var React = require('react');
 var p2 = require('p2');
-var Shape = require('./Shape');
+var Body = require('./Body');
 
 var _require = require('./styles');
 
 var circleStyle = _require.circleStyle;
 
-module.exports = (function (_Shape) {
-  _inherits(Circle, _Shape);
+module.exports = (function (_Body) {
+  _inherits(Circle, _Body);
 
   function Circle() {
     _classCallCheck(this, Circle);
@@ -53,12 +53,19 @@ module.exports = (function (_Shape) {
       return this._shape;
     }
   }, {
+    key: 'getInferedMass',
+    value: function getInferedMass() {
+      var _props$radius2 = this.props.radius;
+      var radius = _props$radius2 === undefined ? 1 : _props$radius2;
+
+      return { mass: Math.PI * radius * radius };
+    }
+  }, {
     key: 'getShapeStyle',
     value: function getShapeStyle() {
-      if (!this._shape) {
-        this.getP2Shape();
-      }
-      var radius = this._shape.radius;
+      var _props$radius3 = this.props.radius;
+      var radius = _props$radius3 === undefined ? 1 : _props$radius3;
+
       return _Object$assign({}, circleStyle, { width: 2 * radius, height: 2 * radius });
     }
   }], [{
@@ -71,4 +78,4 @@ module.exports = (function (_Shape) {
   }]);
 
   return Circle;
-})(Shape);
+})(Body);

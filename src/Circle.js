@@ -1,9 +1,9 @@
 const React = require('react');
 const p2 = require('p2');
-const Shape = require('./Shape');
+const Body = require('./Body');
 const {circleStyle} = require('./styles');
 
-module.exports = class Circle extends Shape {
+module.exports = class Circle extends Body {
   static propTypes = {
     radius: React.PropTypes.number,
     shapeOptions: React.PropTypes.object,
@@ -24,9 +24,13 @@ module.exports = class Circle extends Shape {
     return this._shape;
   }
 
+  getInferedMass() {
+    const {radius = 1} = this.props;
+    return {mass: Math.PI * radius * radius};
+  }
+
   getShapeStyle() {
-    if (!this._shape) { this.getP2Shape(); }
-    const radius = this._shape.radius;
+    const {radius = 1} = this.props;
     return Object.assign({}, circleStyle, {width: 2 * radius, height: 2 * radius});
   }
 };
