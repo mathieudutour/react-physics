@@ -12,14 +12,14 @@ var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
 
 var React = require('react');
 var p2 = require('p2');
-var Shape = require('./Shape');
+var Body = require('./Body');
 
 var _require = require('./styles');
 
 var boxStyle = _require.boxStyle;
 
-module.exports = (function (_Shape) {
-  _inherits(Box, _Shape);
+module.exports = (function (_Body) {
+  _inherits(Box, _Body);
 
   function Box() {
     _classCallCheck(this, Box);
@@ -60,9 +60,26 @@ module.exports = (function (_Shape) {
       return this._shape;
     }
   }, {
+    key: 'getInferedMass',
+    value: function getInferedMass() {
+      var _props2 = this.props;
+      var _props2$height = _props2.height;
+      var height = _props2$height === undefined ? 1 : _props2$height;
+      var _props2$width = _props2.width;
+      var width = _props2$width === undefined ? 1 : _props2$width;
+
+      return { mass: height * width };
+    }
+  }, {
     key: 'getShapeStyle',
     value: function getShapeStyle() {
-      return boxStyle;
+      var _props3 = this.props;
+      var _props3$height = _props3.height;
+      var height = _props3$height === undefined ? 1 : _props3$height;
+      var _props3$width = _props3.width;
+      var width = _props3$width === undefined ? 1 : _props3$width;
+
+      return _Object$assign({}, boxStyle, { width: width, height: height });
     }
   }], [{
     key: 'propTypes',
@@ -75,4 +92,4 @@ module.exports = (function (_Shape) {
   }]);
 
   return Box;
-})(Shape);
+})(Body);

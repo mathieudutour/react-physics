@@ -1,9 +1,9 @@
 const React = require('react');
 const p2 = require('p2');
-const Shape = require('./Shape');
+const Body = require('./Body');
 const {boxStyle} = require('./styles');
 
-module.exports = class Box extends Shape {
+module.exports = class Box extends Body {
   static propTypes = {
     height: React.PropTypes.number,
     width: React.PropTypes.number,
@@ -28,7 +28,13 @@ module.exports = class Box extends Shape {
     return this._shape;
   }
 
+  getInferedMass() {
+    const {height = 1, width = 1} = this.props;
+    return {mass: height * width};
+  }
+
   getShapeStyle() {
-    return boxStyle;
+    const {height = 1, width = 1} = this.props;
+    return Object.assign({}, boxStyle, {width, height});
   }
 };
