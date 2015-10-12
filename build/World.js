@@ -24,7 +24,8 @@ var World = React.createClass({
     style: React.PropTypes.object,
     className: React.PropTypes.string,
     children: React.PropTypes.node,
-    boundToElement: React.PropTypes.bool
+    boundToElement: React.PropTypes.bool,
+    boundToScreen: React.PropTypes.bool
   },
 
   getDefaultProps: function getDefaultProps() {
@@ -49,8 +50,9 @@ var World = React.createClass({
     var className = _props.className;
     var style = _props.style;
     var boundToElement = _props.boundToElement;
+    var boundToScreen = _props.boundToScreen;
 
-    var rest = _objectWithoutProperties(_props, ['element', 'children', 'className', 'style', 'boundToElement']);
+    var rest = _objectWithoutProperties(_props, ['element', 'children', 'className', 'style', 'boundToElement', 'boundToScreen']);
 
     this._world = new p2.World(_extends({}, rest));
 
@@ -60,8 +62,8 @@ var World = React.createClass({
   componentDidMount: function componentDidMount() {
     var _this = this;
 
-    this._initBounds();
-    if (this.props.boundToElement) {
+    if (this.props.boundToElement || this.props.boundToScreen) {
+      this._initBounds();
       this._world.addBody(this._topBound);
       this._world.addBody(this._leftBound);
       this._world.addBody(this._rightBound);
@@ -139,11 +141,17 @@ var World = React.createClass({
   },
 
   _initBounds: function _initBounds() {
-    var container = this.refs.container.getDOMNode();
+    var container = this.props.boundToElement ? {
+      width: this.refs.container.getDOMNode().offsetWidth,
+      height: this.refs.container.getDOMNode().offsetHeight
+    } : {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
     this._topBound = new p2.Body({ mass: 0, position: [0, 0], angle: Math.PI });
     this._leftBound = new p2.Body({
       mass: 0,
-      position: [container.offsetWidth, 0],
+      position: [container.width, 0],
       angle: Math.PI / 2
     });
     this._rightBound = new p2.Body({
@@ -153,7 +161,7 @@ var World = React.createClass({
     });
     this._bottomBound = new p2.Body({
       mass: 0,
-      position: [0, -container.offsetHeight]
+      position: [0, -container.height]
     });
     this._topBound.addShape(new p2.Plane());
     this._leftBound.addShape(new p2.Plane());
