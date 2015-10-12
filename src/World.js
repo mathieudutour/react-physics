@@ -12,6 +12,7 @@ const World = React.createClass({
     className: React.PropTypes.string,
     children: React.PropTypes.node,
     boundToElement: React.PropTypes.bool,
+    boundToScreen: React.PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -30,7 +31,8 @@ const World = React.createClass({
     this._nullBody = new p2.Body();
     this._mouseConstraint = null;
 
-    const {element, children, className, style, boundToElement, ...rest} = this.props;
+    const {element, children, className, style,
+      boundToElement, boundToScreen, ...rest} = this.props;
     this._world = new p2.World({
       ...rest,
     });
@@ -39,8 +41,8 @@ const World = React.createClass({
   },
 
   componentDidMount() {
-    this._initBounds();
-    if (this.props.boundToElement) {
+    if (this.props.boundToElement || this.props.boundToScreen) {
+      this._initBounds();
       this._world.addBody(this._topBound);
       this._world.addBody(this._leftBound);
       this._world.addBody(this._rightBound);
@@ -110,11 +112,17 @@ const World = React.createClass({
   },
 
   _initBounds() {
-    const container = this.refs.container.getDOMNode();
+    const container = this.props.boundToElement ? {
+      width: this.refs.container.getDOMNode().offsetWidth,
+      height: this.refs.container.getDOMNode().offsetHeight,
+    } : {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
     this._topBound = new p2.Body({mass: 0, position: [0, 0], angle: Math.PI});
     this._leftBound = new p2.Body({
       mass: 0,
-      position: [container.offsetWidth, 0],
+      position: [container.width, 0],
       angle: Math.PI / 2,
     });
     this._rightBound = new p2.Body({
@@ -124,7 +132,7 @@ const World = React.createClass({
     });
     this._bottomBound = new p2.Body({
       mass: 0,
-      position: [0, -container.offsetHeight],
+      position: [0, -container.height],
     });
     this._topBound.addShape(new p2.Plane());
     this._leftBound.addShape(new p2.Plane());
